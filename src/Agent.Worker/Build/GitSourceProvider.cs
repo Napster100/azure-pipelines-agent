@@ -119,6 +119,29 @@ namespace Microsoft.VisualStudio.Services.Agent.Worker.Build
         public override string RepositoryType => TeamFoundation.DistributedTask.Pipelines.RepositoryTypes.Bitbucket;
     }
 
+    public sealed class GiteaSourceProvider : AuthenticatedGitSourceProvider
+    {
+        public override string RepositoryType => $"Gitea";
+
+        public override string GenerateAuthHeader(string username, string password)
+        {
+            ArgUtil.NotNullOrEmpty(password, nameof(password));
+            switch (username)
+                {
+                    case EndpointAuthorizationSchemes.OAuth:
+                        return $"bearer {password}";
+                    case EndpointAuthorizationSchemes.Token:
+                        return $"token {password}";
+                    default:
+                        string authHeader = $"{username ?? string.Empty}:{password ?? string.Empty}";
+                        string base64encodedAuthHeader = Convert.ToBase64String(Encoding.UTF8.GetBytes(authHeader));
+
+                        HostContext.SecretMasker.AddValue(base64encodedAuthHeader, WellKnownSecretAliases.GitSourceProviderAuthHeader);
+                        return $"basic {base64encodedAuthHeader}";
+                }
+        }
+    }
+
     public sealed class TfsGitSourceProvider : GitSourceProvider
     {
         public override string RepositoryType => TeamFoundation.DistributedTask.Pipelines.RepositoryTypes.Git;
