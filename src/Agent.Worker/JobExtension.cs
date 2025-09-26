@@ -15,6 +15,7 @@ using Agent.Sdk;
 using Agent.Sdk.Knob;
 using Newtonsoft.Json;
 using Microsoft.VisualStudio.Services.Agent.Worker.Telemetry;
+using Medo;
 
 namespace Microsoft.VisualStudio.Services.Agent.Worker
 {
@@ -62,7 +63,7 @@ namespace Microsoft.VisualStudio.Services.Agent.Worker
             ArgUtil.NotNull(message, nameof(message));
 
             // create a new timeline record node for 'Initialize job'
-            IExecutionContext context = jobContext.CreateChild(Guid.NewGuid(), StringUtil.Loc("InitializeJob"), $"{nameof(JobExtension)}_Init");
+            IExecutionContext context = jobContext.CreateChild(Uuid7.NewUuid7(), StringUtil.Loc("InitializeJob"), $"{nameof(JobExtension)}_Init");
 
             List<IStep> preJobSteps = new List<IStep>();
             List<IStep> jobSteps = new List<IStep>();
@@ -521,7 +522,7 @@ namespace Microsoft.VisualStudio.Services.Agent.Worker
             ArgUtil.NotNull(jobContext, nameof(jobContext));
 
             // create a new timeline record node for 'Finalize job'
-            IExecutionContext context = jobContext.CreateChild(Guid.NewGuid(), StringUtil.Loc("FinalizeJob"), $"{nameof(JobExtension)}_Final");
+            IExecutionContext context = jobContext.CreateChild(Uuid7.NewUuid7(), StringUtil.Loc("FinalizeJob"), $"{nameof(JobExtension)}_Final");
             using (var register = jobContext.CancellationToken.Register(() => { context.CancelToken(); }))
             {
                 try
