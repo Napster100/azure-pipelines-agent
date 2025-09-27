@@ -257,7 +257,7 @@ namespace Agent.Plugins.Repository
             return false;
         }
 
-        public string GenerateAuthHeader(AgentTaskPluginExecutionContext executionContext, string username, string password, bool isBearer)
+        public virtual string GenerateAuthHeader(AgentTaskPluginExecutionContext executionContext, string username, string password, bool isBearer)
         {
             if (isBearer)
             {
