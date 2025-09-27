@@ -349,6 +349,10 @@ namespace Microsoft.VisualStudio.Services.Agent.Worker.Build
             {
                 return "TfsVersionControl";
             }
+            else if (String.Equals(pipelineRepositoryType, "Gitea", StringComparison.OrdinalIgnoreCase))
+            {
+                return "Gitea";
+            }
             else
             {
                 throw new NotSupportedException(pipelineRepositoryType);
