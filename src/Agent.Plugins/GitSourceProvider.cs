@@ -106,6 +106,46 @@ namespace Agent.Plugins.Repository
         }
     }
 
+    public class GiteaSourceProvider : AuthenticatedGitSourceProvider
+    {
+        public override bool GitSupportsFetchingCommitBySha1Hash(GitCliManager gitCommandManager)
+        {
+            if (gitCommandManager.EnsureGitVersion(_minGitVersionDefaultV2, throwOnNotMatch: false))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        public override bool UseBearerAuthenticationForOAuth()
+        {
+            return true;
+        }
+
+        public override string GenerateAuthHeader(AgentTaskPluginExecutionContext executionContext, string username, string password, bool isBearer)
+        {
+            switch (username)
+                {
+                    case EndpointAuthorizationSchemes.Token:
+                        ArgUtil.NotNullOrEmpty(password, nameof(password));
+                        return $"token {password}";
+                    case EndpointAuthorizationSchemes.OAuth:
+                        if (isBearer)
+                        { 
+                            ArgUtil.NotNullOrEmpty(password, nameof(password));
+                            return $"bearer {password}";
+                        }
+                    default:
+                        string authHeader = $"{username ?? string.Empty}:{password ?? string.Empty}";
+                        string base64encodedAuthHeader = Convert.ToBase64String(Encoding.UTF8.GetBytes(authHeader));
+
+                        executionContext.SetSecret(base64encodedAuthHeader);
+                        return $"basic {base64encodedAuthHeader}";
+                }
+        }
+    }
+
     public class TfsGitSourceProvider : GitSourceProvider
     {
         public override bool GitSupportsFetchingCommitBySha1Hash(GitCliManager gitCommandManager)
