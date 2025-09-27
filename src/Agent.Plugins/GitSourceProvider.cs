@@ -125,24 +125,24 @@ namespace Agent.Plugins.Repository
 
         public override string GenerateAuthHeader(AgentTaskPluginExecutionContext executionContext, string username, string password, bool isBearer)
         {
+            if (isBearer)
+            {
+                ArgUtil.NotNullOrEmpty(password, nameof(password));
+                return $"bearer {password}";
+            }
+            
             switch (username)
-                {
-                    case EndpointAuthorizationSchemes.Token:
-                        ArgUtil.NotNullOrEmpty(password, nameof(password));
-                        return $"token {password}";
-                    case EndpointAuthorizationSchemes.OAuth:
-                        if (isBearer)
-                        { 
-                            ArgUtil.NotNullOrEmpty(password, nameof(password));
-                            return $"bearer {password}";
-                        }
-                    default:
-                        string authHeader = $"{username ?? string.Empty}:{password ?? string.Empty}";
-                        string base64encodedAuthHeader = Convert.ToBase64String(Encoding.UTF8.GetBytes(authHeader));
+            {
+                case EndpointAuthorizationSchemes.Token:
+                    ArgUtil.NotNullOrEmpty(password, nameof(password));
+                    return $"token {password}";
+                default:
+                    string authHeader = $"{username ?? string.Empty}:{password ?? string.Empty}";
+                    string base64encodedAuthHeader = Convert.ToBase64String(Encoding.UTF8.GetBytes(authHeader));
 
-                        executionContext.SetSecret(base64encodedAuthHeader);
-                        return $"basic {base64encodedAuthHeader}";
-                }
+                    executionContext.SetSecret(base64encodedAuthHeader);
+                    return $"basic {base64encodedAuthHeader}";
+            }
         }
     }
 
