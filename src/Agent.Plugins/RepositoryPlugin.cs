@@ -303,6 +303,10 @@ namespace Agent.Plugins.Repository
             {
                 sourceProvider = new SvnSourceProvider();
             }
+            else if (string.Equals(repositoryType, "Gitea", StringComparison.OrdinalIgnoreCase))
+            {
+                sourceProvider = new GiteaSourceProvider();
+            }
             else
             {
                 throw new NotSupportedException(repositoryType);
