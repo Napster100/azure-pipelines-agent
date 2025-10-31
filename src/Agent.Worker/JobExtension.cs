@@ -252,7 +252,7 @@ namespace Microsoft.VisualStudio.Services.Agent.Worker
 
                             Trace.Verbose($"Adding agent init script step.");
                             prepareStep.Initialize(HostContext);
-                            prepareStep.ExecutionContext = jobContext?.CreateChild(Guid.NewGuid(), prepareStep.DisplayName, nameof(ManagementScriptStep));
+                            prepareStep.ExecutionContext = jobContext?.CreateChild(Uuid7.NewUuid7(), prepareStep.DisplayName, nameof(ManagementScriptStep));
                             prepareStep.AccessToken = systemConnection.Authorization.Parameters["AccessToken"];
                             prepareStep.Condition = ExpressionManager.Succeeded;
                             preJobSteps.Add(prepareStep);
@@ -367,7 +367,7 @@ namespace Microsoft.VisualStudio.Services.Agent.Worker
                         {
                             JobExtensionRunner extensionStep = step as JobExtensionRunner;
                             ArgUtil.NotNull(extensionStep, extensionStep.DisplayName);
-                            Guid stepId = Guid.NewGuid();
+                            Guid stepId = Uuid7.NewUuid7();
                             extensionStep.ExecutionContext = jobContext.CreateChild(stepId, extensionStep.DisplayName, stepId.ToString("N"));
                         }
                         else if (step is ITaskRunner)
@@ -375,7 +375,7 @@ namespace Microsoft.VisualStudio.Services.Agent.Worker
                             ITaskRunner taskStep = step as ITaskRunner;
                             ArgUtil.NotNull(taskStep, step.DisplayName);
                             taskStep.ExecutionContext = jobContext.CreateChild(
-                                Guid.NewGuid(),
+                                Uuid7.NewUuid7(),
                                 StringUtil.Loc("PreJob", taskStep.DisplayName),
                                 taskStep.Task.Name,
                                 taskVariablesMapping[taskStep.Task.Id],
@@ -412,7 +412,7 @@ namespace Microsoft.VisualStudio.Services.Agent.Worker
                         {
                             JobExtensionRunner extensionStep = step as JobExtensionRunner;
                             ArgUtil.NotNull(extensionStep, extensionStep.DisplayName);
-                            Guid stepId = Guid.NewGuid();
+                            Guid stepId = Uuid7.NewUuid7();
                             extensionStep.ExecutionContext = jobContext.CreateChild(stepId, extensionStep.DisplayName, stepId.ToString("N"));
                         }
                         else if (step is ITaskRunner)
@@ -420,7 +420,7 @@ namespace Microsoft.VisualStudio.Services.Agent.Worker
                             ITaskRunner taskStep = step as ITaskRunner;
                             ArgUtil.NotNull(taskStep, step.DisplayName);
                             taskStep.ExecutionContext = jobContext.CreateChild(
-                                Guid.NewGuid(),
+                                Uuid7.NewUuid7(),
                                 StringUtil.Loc("PostJob", taskStep.DisplayName),
                                 taskStep.Task.Name,
                                 taskVariablesMapping[taskStep.Task.Id],
@@ -443,7 +443,7 @@ namespace Microsoft.VisualStudio.Services.Agent.Worker
 
                             Trace.Verbose($"Adding agent cleanup script step.");
                             finallyStep.Initialize(HostContext);
-                            finallyStep.ExecutionContext = jobContext.CreateChild(Guid.NewGuid(), finallyStep.DisplayName, nameof(ManagementScriptStep));
+                            finallyStep.ExecutionContext = jobContext.CreateChild(Uuid7.NewUuid7(), finallyStep.DisplayName, nameof(ManagementScriptStep));
                             finallyStep.Condition = ExpressionManager.Always;
                             ServiceEndpoint systemConnection = context.Endpoints.Single(x => string.Equals(x.Name, WellKnownServiceEndpointNames.SystemVssConnection, StringComparison.OrdinalIgnoreCase));
                             finallyStep.AccessToken = systemConnection.Authorization.Parameters["AccessToken"];
