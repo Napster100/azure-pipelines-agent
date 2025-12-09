@@ -108,6 +108,8 @@ namespace Microsoft.VisualStudio.Services.Agent.Listener
                         encounteringError = false;
                     }
 
+                    _lastMessageId = 0;
+
                     return true;
                 }
                 catch (OperationCanceledException) when (token.IsCancellationRequested)
@@ -294,7 +296,7 @@ namespace Microsoft.VisualStudio.Services.Agent.Listener
             {
                 try
                 {
-                    await _agentServer.GetAgentMessageAsync(_settings.PoolId, _session.SessionId, null, token);
+                    await _agentServer.GetAgentMessageAsync(_settings.PoolId, _session.SessionId, -1, token);
                     Trace.Info($"Sent GetAgentMessage to keep alive agent {_settings.AgentId}, session '{_session.SessionId}'.");
                 }
                 catch (Exception ex)
